@@ -90,6 +90,18 @@ router.get('/getUsers', authenticateToken, (req, res) => {
     res.status(200).json(users)
 });
 
+// Pesquisar através de especialidade
+router.get('/getSpeciality/:speciality', authenticateToken, (req, res)=>{
+    const {specialty} = req.params
+    for(let i=0; i<users.length;i++){
+        if(users[i].specialty === specialty){
+            return res.json(users[i])
+        }else{
+            return res.status(401).json({message: "Nenhum médico tem essa especialidade!"})
+        }
+    }
+})
+
 // Criar pacientes
 router.post('/createPatient', authenticateToken, (req, res)=>{
     const {name, cpf, birthDate, phone} = req.body
@@ -124,7 +136,19 @@ router.delete('deletePatient/:id', authenticateToken, (req,res)=>{
 
 // Ver todos os pacientes
 router.get('/getAllPatient', authenticateToken, (req,res)=>{
-    res.status.json(patients)
+    res.status(200).json(patients)
+})
+
+// Pesquisar paciente por nome
+router.get('/getPatientName:/name', authenticateToken, (req,res)=>{
+    const {name} = req.params
+    for(let i=0; i<patients.length; i++){
+        if(name === patients[i].name){
+            return res.status(200).json(patients[i])
+        }else{
+            return res.status(404).json({message: "Paciente não encontrado!"})
+        }
+    }
 })
 
 // Cria uma nova consulta
@@ -153,7 +177,7 @@ router.put('/updateAppointment/:id', authenticateToken, (req,res)=>{
 })
 
 // Deleta uma consulta
-router.delete('/deleteAppointment/:id', authenticateToken, (res,req)=>{
+router.delete('/deleteAppointment/:id', authenticateToken, (req,res)=>{
     const {id} = req.params
     const index = appointments.findIndex(appointment => appointment.idAppointment == id)
     if(req.user.id == appointments[index].idDoctor){
@@ -161,6 +185,23 @@ router.delete('/deleteAppointment/:id', authenticateToken, (res,req)=>{
         return res.status(200).json({message: 'Consulta deletada com sucesso!'})
     }else{
         return res.status(401).json({message: 'Apenas o médico responsável pela consulta pode deletar!'})
+    }
+})
+
+// Ver todas as consultas
+router.get('getAppointment', authenticateToken, (req,res)=>{
+    res.status(200).json(appointments)
+})
+
+// Pesquisar consultas por data
+router.get('/getDateAppointment/:date', authenticateToken, (req, res)=>{
+    const {date} = req.params
+    for(let i=0; i<appointments.length; i++){
+        if(date == appointments[i].date){
+            return res.status(200).json(appointments[i])
+        }else{
+            return res.status(401).json({message: "Não existe consultas nessa data!"})
+        }
     }
 })
 
