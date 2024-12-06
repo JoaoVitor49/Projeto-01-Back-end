@@ -124,7 +124,7 @@ router.put('/updatePatient/:id', authenticateToken, (req,res)=>{
 })
 
 // Deleta pacientes
-router.delete('deletePatient/:id', authenticateToken, (req,res)=>{
+router.delete('/deletePatient/:id', authenticateToken, (req,res)=>{
     const {id} = req.params
     const index = patients.findIndex(patient => patient.idPatient == id)
     if(index === -1){
@@ -140,7 +140,7 @@ router.get('/getAllPatient', authenticateToken, (req,res)=>{
 })
 
 // Pesquisar paciente por nome
-router.get('/getPatientName:/name', authenticateToken, (req,res)=>{
+router.get('/getPatientName/:name', authenticateToken, (req,res)=>{
     const {name} = req.params
     for(let i=0; i<patients.length; i++){
         if(name === patients[i].name){
