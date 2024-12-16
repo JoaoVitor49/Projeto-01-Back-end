@@ -2,25 +2,34 @@ const express = require('express')
 const jwt = require("jsonwebtoken")
 const router = express.Router()
 const { authenticateToken, admin } = require('../middlewares/auth')
+const { paginate } = require('../utils/paginação')
 
 const users = []
-users.push({
-    id: 1,
-    name: "Dr. Roberto Costa",
-    email: "roberto.costa@example.com",
-    password: "senha123",
-    crm: "123456-DF",
-    phone: "61987654321",
-    especialidade: "Cardiologista",
-    isAdmin: true
-})
-
 const patients = []
 const appointments = []
 
 let idPatient = 1
 let idDoctor = 2
 let idAppointment = 1
+
+router.get('/install', (req,res)=>{
+    const adminExist = users.filter(user => user.isAdmin == true)
+    if(adminExist.length != 0){
+        return res.status(400).json({ message: 'Ja existem administradores!' });
+    }
+    const admin = {
+        id: 1,
+        name: "Dr. Roberto Costa",
+        email: "roberto.costa@example.com",
+        password: "senha123",
+        crm: "123456-DF",
+        phone: "61987654321",
+        speciality: "Cardiologista",
+        isAdmin: true
+    }
+    users.push(admin)
+    res.status(200).json({message: 'Admin criado com sucesso'})
+})
 
 // Login
 router.post('/login', (req, res) => {
@@ -35,8 +44,8 @@ router.post('/login', (req, res) => {
 
 // Criar usuários (somente admin pode criar)
 router.post('/createUser', authenticateToken, admin, (req, res) => {
-    const { name, email, password, crm, phone, specialty} = req.body
-    const newUser = { idDoctor, name, email, password, crm, phone, specialty, isAdmin: false }
+    const { name, email, password, crm, phone, speciality} = req.body
+    const newUser = { idDoctor, name, email, password, crm, phone, speciality, isAdmin: false }
     users.push(newUser)
     idDoctor++
     res.status(201).json([{ message: 'Usuário cadastrado' }, { newUser }])
@@ -44,8 +53,8 @@ router.post('/createUser', authenticateToken, admin, (req, res) => {
 
 // Criar admins (somente admin pode criar)
 router.post('/createAdmin', authenticateToken, admin, (req, res) => {
-    const { name, email, password, crm, phone, specialty} = req.body
-    const newAdmin = { idDoctor, name, email, password, crm, phone, specialty, isAdmin: true }
+    const { name, email, password, crm, phone, speciality} = req.body
+    const newAdmin = { idDoctor, name, email, password, crm, phone, speciality, isAdmin: true }
     users.push(newAdmin)
     idDoctor++
     res.status(201).json([{ message: 'Usuário cadastrado' }, { newAdmin }])
@@ -54,17 +63,17 @@ router.post('/createAdmin', authenticateToken, admin, (req, res) => {
 // Alterar dados dos usuario (admin podem alterar qualquer usuario)
 router.put('/updateUser/:id', authenticateToken, (req,res)=>{
     const { id } = req.params
-    const { name, email, password, crm, phone, specialty, isAdmin } = req.body
+    const { name, email, password, crm, phone, speciality, isAdmin } = req.body
     const index = users.findIndex(user => user.idDoctor == id)
     if (index === -1) {
         return res.status(404).json({ message: 'Usuário não encontrado!' })
     }
     if(req.user.isAdmin){
-        users[index] = {...users[index], idDoctor, name: name, email: email, password: password, crm: crm, phone:phone, specialty:specialty, isAdmin: isAdmin}
+        users[index] = {...users[index], idDoctor, name: name, email: email, password: password, crm: crm, phone:phone, speciality:speciality, isAdmin: isAdmin}
         return res.status(200).json({message: 'Usuario alterado com sucesso'})
     }
     if(req.user.email === users[index].email){
-        users[index] = {...users[index], idDoctor, name: name, email: email, password: password, crm: crm, phone:phone, specialty:specialty}
+        users[index] = {...users[index], idDoctor, name: name, email: email, password: password, crm: crm, phone:phone, speciality:speciality}
         res.status(200).json({message: 'Usuario alterado com sucesso'})
     }  
     res.status(403).json({ message: 'Acesso negado: Você só pode alterar seus próprios dados!' });   
@@ -87,18 +96,28 @@ router.delete('/delUser/:id', authenticateToken, admin, (req, res) => {
 
 // Ver todos os usuários
 router.get('/getUsers', authenticateToken, (req, res) => {
-    res.status(200).json(users)
+    try {
+        const {limit, page} = req.query
+        const showUsers = paginate(users, limit, page)
+        res.status(200).json(showUsers)
+    } catch (error) {
+        res.status(400).json({message: error.message})
+    }   
 });
 
 // Pesquisar através de especialidade
 router.get('/getSpeciality/:speciality', authenticateToken, (req, res)=>{
-    const {specialty} = req.params
-    for(let i=0; i<users.length;i++){
-        if(users[i].specialty === specialty){
-            return res.json(users[i])
-        }else{
-            return res.status(401).json({message: "Nenhum médico tem essa especialidade!"})
-        }
+    const {speciality} = req.params
+    const specialityUsers = users.filter(user => user.speciality == speciality)
+    if(specialityUsers.length === 0){
+        return res.status(401).json({message: "Nenhum médico tem essa especialidade!"})
+    }
+    try {
+        const {limit, page} = req.query
+        const showUsers = paginate(specialityUsers, limit, page)
+        res.status(200).json(showUsers)
+    } catch (error) {
+        res.status(400).json({message: error.message})
     }
 })
 
@@ -136,19 +155,29 @@ router.delete('/deletePatient/:id', authenticateToken, (req,res)=>{
 
 // Ver todos os pacientes
 router.get('/getAllPatient', authenticateToken, (req,res)=>{
-    res.status(200).json(patients)
+    try {
+        const {limit, page} = req.query
+        const showPatients = paginate(patients, limit, page)
+        res.status(200).json(showPatients)
+    } catch (error) {
+        res.status(400).json({message: error.message})
+    }     
 })
 
 // Pesquisar paciente por nome
 router.get('/getPatientName/:name', authenticateToken, (req,res)=>{
     const {name} = req.params
-    for(let i=0; i<patients.length; i++){
-        if(name === patients[i].name){
-            return res.status(200).json(patients[i])
-        }else{
-            return res.status(404).json({message: "Paciente não encontrado!"})
-        }
+    const namePatients = patients.filter(patient => patient.name == name)
+    if(namePatients.length === 0){
+        return res.status(404).json({message: "Não existe nenhum paciente com esse nome!"})
     }
+    try {
+        const {limit, page} = req.query
+        const showPatients = paginate(namePatients, limit, page)
+        res.status(200).json(showPatients)
+    } catch (error) {
+        res.status(400).json({message: error.message})
+    }     
 })
 
 // Cria uma nova consulta
@@ -189,20 +218,30 @@ router.delete('/deleteAppointment/:id', authenticateToken, (req,res)=>{
 })
 
 // Ver todas as consultas
-router.get('getAppointment', authenticateToken, (req,res)=>{
-    res.status(200).json(appointments)
+router.get('/getAppointment', authenticateToken, (req,res)=>{ 
+    try {
+        const {limit, page} = req.query
+        const showAppointments = paginate(appointments, limit, page)
+        res.status(200).json(showAppointments)
+    } catch (error) {
+        res.status(400).json({message: error.message})
+    }     
 })
 
 // Pesquisar consultas por data
 router.get('/getDateAppointment/:date', authenticateToken, (req, res)=>{
     const {date} = req.params
-    for(let i=0; i<appointments.length; i++){
-        if(date == appointments[i].date){
-            return res.status(200).json(appointments[i])
-        }else{
-            return res.status(401).json({message: "Não existe consultas nessa data!"})
-        }
+    const appointmentsDate = appointments.filter(appointments => appointments.date == date)
+    if(appointmentsDate.length === 0){
+        return res.status(401).json({message: "Não existe consultas nessa data!"})
     }
+    try {
+        const {limit, page} = req.query
+        const showAppointments = paginate(appointmentsDate, limit, page)
+        res.status(200).json(showAppointments)
+    } catch (error) {
+        res.status(400).json({message: error.message})
+    }     
 })
 
 module.exports = router
