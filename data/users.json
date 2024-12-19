@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Dr. João",
+    "name": "João Vitor",
     "email": "joao.silva123@example.com",
     "password": "senha123",
     "crm": "123456-SP",
@@ -20,7 +20,7 @@
     "isAdmin": false
   },
   {
-    "id": 4,
+    "id": 3,
     "name": "Dr. Laura Costa",
     "email": "laura.costa@example.com",
     "password": "senha123",
@@ -30,13 +30,23 @@
     "isAdmin": false
   },
   {
-    "id": 5,
+    "id": 4,
     "name": "Dr. Felipe Pereira",
     "email": "felipe.pereira@example.com",
     "password": "senha123",
     "crm": "567890-BA",
     "phone": "71987654321",
     "speciality": "Ortopedia",
+    "isAdmin": false
+  },
+  {
+    "id": 5,
+    "name": "Mariana ",
+    "email": "mariana.a@example.com",
+    "password": "senha101112",
+    "crm": "112233-MG",
+    "phone": "31987654323",
+    "speciality": "Dermatologista",
     "isAdmin": false
   },
   {
@@ -50,23 +60,13 @@
     "isAdmin": true
   },
   {
-    "id": 8,
-    "name": "Mariana ",
-    "email": "mariana.a@example.com",
-    "password": "senha101112",
-    "crm": "112233-MG",
-    "phone": "31987654323",
-    "speciality": "Dermatologista",
-    "isAdmin": true
-  },
-  {
-    "id": 9,
-    "name": "Heitor",
-    "email": "jaodsadas@example.com",
+    "id": 7,
+    "name": "Heitor Ferreira",
+    "email": "heitorpf@example.com",
     "password": "12345678",
     "crm": "334455-PR",
     "phone": "41987654324",
     "speciality": "Cardiologista",
-    "isAdmin": false
+    "isAdmin": true
   }
 ]

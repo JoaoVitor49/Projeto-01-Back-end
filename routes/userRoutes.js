@@ -37,8 +37,7 @@ router.get('/install', async(req,res)=>{
         await write(usersFilePath, users)
         res.status(200).json({message: 'Admin criado com sucesso'})
     } catch (error) {
-        console.error('Erro ao criar admin:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     } 
 })
 
@@ -54,8 +53,7 @@ router.post('/login', async(req, res) => {
         const token = jwt.sign({ email: user.email, isAdmin: user.isAdmin, id: user.id }, process.env.SENHA , { expiresIn: '30m' })
         res.status(200).json({ message: 'Login feito com sucesso', token })
     } catch (error) {
-        console.error('Erro ao criar admin:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
 });
 
@@ -74,8 +72,7 @@ router.post('/createUser', authenticateToken, admin, validate(userSchema), async
         await write(usersFilePath, users)
         res.status(201).json([{ message: 'Usuário cadastrado' }, { newUser }])
     } catch (error) {
-        console.error('Erro ao criar usuario:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
 });
 
@@ -92,8 +89,7 @@ router.post('/createAdmin', authenticateToken, admin, validate(userSchema), asyn
         await write(usersFilePath, users)
         res.status(201).json([{ message: 'Usuário cadastrado' }, { newAdmin }])
     } catch (error) {
-        console.error('Erro ao criar admin:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
 });
 
@@ -127,13 +123,15 @@ router.put('/updateUser/:id', authenticateToken, validate(updateUserSchema), asy
                 crm: crm || users[index].crm,
                 phone: phone || users[index].phone,
                 speciality: speciality || users[index].speciality}
+            if(isAdmin !== undefined){
+                return res.status(401).json({message: "Voce não pode alterar isAdmin"})
+            }
             await write(usersFilePath, users)
             res.status(200).json({message: 'Usuario alterado com sucesso'})
         }  
         res.status(403).json({ message: 'Acesso negado: Você só pode alterar seus próprios dados!' });
     } catch (error) {
-        console.error('Erro ao atualizar dados do usuario:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }      
 })
 
@@ -151,11 +149,10 @@ router.delete('/delUser/:id', authenticateToken, admin, async(req, res) => {
             await write(usersFilePath, users)
             return res.status(200).json({ message: "Usuário deletado" })
         }else{
-            return res.status(401).json({ message: "Usuário é um adminstrador, portanto não pode ser excluido!" })
+            return res.status(404).json({ message: "Usuário é um adminstrador, portanto não pode ser excluido!" })
         }  
     } catch (error) {
-        console.error('Erro ao deletar usuario:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }   
 });
 
@@ -167,8 +164,7 @@ router.get('/getUsers', authenticateToken, async(req, res) => {
         const showUsers = paginate(users, limit, page)
         res.status(200).json(showUsers)
     } catch (error) {
-        console.error('Erro ao listar usuarios:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }   
 });
 
@@ -179,18 +175,13 @@ router.get('/getSpeciality/:speciality', authenticateToken, async(req, res)=>{
         const {speciality} = req.params
         const specialityUsers = users.filter(user => user.speciality == speciality)
         if(specialityUsers.length === 0){
-            return res.status(401).json({message: "Nenhum médico tem essa especialidade!"})
+            return res.status(404).json({message: "Nenhum médico tem essa especialidade!"})
         }
-        try {
-            const {limit, page} = req.query
-            const showUsers = paginate(specialityUsers, limit, page)
-            res.status(200).json(showUsers)
-        } catch (error) {
-            res.status(400).json({message: error.message})
-        }
+        const {limit, page} = req.query
+        const showUsers = paginate(specialityUsers, limit, page)
+        res.status(200).json(showUsers)
     } catch (error) {
-        console.error('Erro ao buscar por especialidade:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }   
 })
 
@@ -209,8 +200,7 @@ router.post('/createPatient', authenticateToken, validate(patientSchema), async(
         await write(patientsFilePath, patients)
         res.status(201).json([{message: 'Paciente Cadastrado'}, {newPatient}])
     } catch (error) {
-        console.error('Erro ao criar paciente:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }      
 })
 
@@ -233,8 +223,7 @@ router.put('/updatePatient/:id', authenticateToken, validate(updatePatientSchema
         await write(patientsFilePath, patients)
         res.status(200).json({message: 'Dados do pacientes atualizados com sucesso!'})
     } catch (error) {
-        console.error('Erro ao atualizar paciente:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }  
 })
 
@@ -251,8 +240,7 @@ router.delete('/deletePatient/:id', authenticateToken, async(req,res)=>{
         await write(patientsFilePath, patients)
         res.status(200).json({message: 'Paciente deletado com sucesso!'})
     } catch (error) {
-        console.error('Erro ao deletar paciente:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
 })
 
@@ -264,8 +252,7 @@ router.get('/getAllPatient', authenticateToken, async(req,res)=>{
         const showPatients = paginate(patients, limit, page)
         res.status(200).json(showPatients)
     } catch (error) {
-        console.error('Erro ao listar pacientes:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }     
 })
 
@@ -282,8 +269,7 @@ router.get('/getPatientName/:name', authenticateToken, async(req,res)=>{
         const showPatients = paginate(namePatients, limit, page)
         res.status(200).json(showPatients)
     } catch (error) {
-        console.error('Erro ao buscar paciente por nome:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
 })
 
@@ -306,8 +292,7 @@ router.post('/createAppointement', authenticateToken, validate(appointmentSchema
         await write(appointmentsFilePath, appointments)
         res.status(200).json({message: 'Consulta marcada com sucesso!'})
     } catch (error) {
-        console.error('Erro ao criar consulta:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
 })
 
@@ -323,11 +308,19 @@ router.put('/updateAppointment/:id', authenticateToken, validate(updateAppointme
             return res.status(404).json({ message: 'Consulta não encontrada!' })
         }
         const {idDoctor, idPatient, date, time, reason} = req.body
-        /*const doctorExists = users.some(user => user.id === idDoctor)
+        const doctorExists = users.some(user => user.id === idDoctor)
         const patientExists = patients.some(patient => patient.id === idPatient)
-        if (!doctorExists || !patientExists) {
-            return res.status(404).json({message: 'Médico ou paciente não encontrado'})
-        }*/
+        if(idDoctor != undefined || idPatient != undefined){
+            if (!doctorExists && idPatient == undefined) {
+                return res.status(404).json({message: 'Médico não encontrado'})
+            }
+            if(!patientExists && idDoctor == undefined){
+                return res.status(404).json({message: 'Paciente não encontrado'})
+            }
+            if (!doctorExists && !patientExists) {
+                return res.status(404).json({message: 'Médico ou paciente não encontrado'})
+            }
+        }     
         if(req.user.id == appointments[index].idDoctor){
             appointments[index] = {
                 ...appointments[index], 
@@ -342,8 +335,7 @@ router.put('/updateAppointment/:id', authenticateToken, validate(updateAppointme
             return res.status(401).json({message: 'Apenas o médico responsável pela consulta pode alterar os dados!'})
         }
     } catch (error) {
-        console.error('Erro ao atualizar consulta:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
     
     
@@ -366,8 +358,7 @@ router.delete('/deleteAppointment/:id', authenticateToken, async(req,res)=>{
             return res.status(401).json({message: 'Apenas o médico responsável pela consulta pode deletar!'})
         }
     } catch (error) {
-        console.error('Erro ao deletar consulta:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }
     
 })
@@ -380,8 +371,7 @@ router.get('/getAppointment', authenticateToken, async(req,res)=>{
         const showAppointments = paginate(appointments, limit, page)
         res.status(200).json(showAppointments)
     } catch (error) {
-        console.error('Erro ao listas consultas:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }     
 })
 
@@ -392,14 +382,13 @@ router.get('/getDateAppointment/:date', authenticateToken, async(req, res)=>{
         const {date} = req.params
         const appointmentsDate = appointments.filter(appointments => appointments.date == date)
         if(appointmentsDate.length === 0){
-            return res.status(401).json({message: "Não existe consultas nessa data!"})
+            return res.status(404).json({message: "Não existe consultas nessa data!"})
         }
         const {limit, page} = req.query
         const showAppointments = paginate(appointmentsDate, limit, page)
         res.status(200).json(showAppointments)
     } catch (error) {
-        console.error('Erro ao buscar consultas por data:', error)
-        res.status(500).json({message: 'Erro interno'})
+        res.status(500).json({message: error.message})
     }  
 })
 

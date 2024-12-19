@@ -8,30 +8,23 @@
   },
   {
     "id": 2,
-    "name": "Joao",
+    "name": "Joao Vitor",
     "cpf": "987.654.321-00",
     "birthDate": "2002-04-27",
     "phone": "97865432"
   },
   {
-    "id": 4,
+    "id": 3,
     "name": "Ricardo Oliveira",
     "cpf": "555.666.777-88",
     "birthDate": "1980-05-05",
     "phone": "61987654321"
   },
   {
-    "id": 5,
+    "id": 4,
     "name": "HeitorPF",
     "cpf": "422.594.338-04",
     "birthDate": "2001-12-03",
     "phone": "15998907808"
-  },
-  {
-    "id": 6,
-    "name": "fdddddrs",
-    "cpf": "648888949",
-    "birthDate": "2001-12-03",
-    "phone": "14645646"
   }
 ]

@@ -34,9 +34,9 @@
   {
     "id": 6,
     "idDoctor": 1,
-    "idPatient": 1,
+    "idPatient": 4,
     "date": "2024-12-20",
-    "time": "10:25",
+    "time": "12:00",
     "reason": "exame"
   }
 ]
