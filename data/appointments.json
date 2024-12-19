@@ -1,0 +1,42 @@
+[
+  {
+    "id": 2,
+    "idDoctor": 2,
+    "idPatient": 2,
+    "date": "2024-12-20",
+    "time": "14:00",
+    "reason": "Exame ginecológico"
+  },
+  {
+    "id": 3,
+    "idDoctor": 3,
+    "idPatient": 3,
+    "date": "2024-12-21",
+    "time": "09:00",
+    "reason": "Acompanhamento de cardiologia"
+  },
+  {
+    "id": 4,
+    "idDoctor": 4,
+    "idPatient": 4,
+    "date": "2024-12-21",
+    "time": "11:00",
+    "reason": "Consulta neurológica"
+  },
+  {
+    "id": 5,
+    "idDoctor": 5,
+    "idPatient": 5,
+    "date": "2024-12-22",
+    "time": "08:30",
+    "reason": "Exame ortopédico"
+  },
+  {
+    "id": 6,
+    "idDoctor": 1,
+    "idPatient": 1,
+    "date": "2024-12-20",
+    "time": "10:25",
+    "reason": "exame"
+  }
+]

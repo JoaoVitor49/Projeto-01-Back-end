@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. João",
+    "email": "joao.silva123@example.com",
+    "password": "senha123",
+    "crm": "123456-SP",
+    "phone": "14987654321",
+    "speciality": "Pediatria",
+    "isAdmin": false
+  },
+  {
+    "id": 2,
+    "name": "Dr. Maria Oliveira",
+    "email": "maria@example.com",
+    "password": "senha123",
+    "crm": "234567-RJ",
+    "phone": "21987654321",
+    "speciality": "Ginecologia",
+    "isAdmin": false
+  },
+  {
+    "id": 4,
+    "name": "Dr. Laura Costa",
+    "email": "laura.costa@example.com",
+    "password": "senha123",
+    "crm": "456789-DF",
+    "phone": "61987654321",
+    "speciality": "Neurologia",
+    "isAdmin": false
+  },
+  {
+    "id": 5,
+    "name": "Dr. Felipe Pereira",
+    "email": "felipe.pereira@example.com",
+    "password": "senha123",
+    "crm": "567890-BA",
+    "phone": "71987654321",
+    "speciality": "Ortopedia",
+    "isAdmin": false
+  },
+  {
+    "id": 6,
+    "name": "Dr. Roberto Costa",
+    "email": "roberto.costa@example.com",
+    "password": "senha123",
+    "crm": "123456-DF",
+    "phone": "61987654321",
+    "speciality": "Cardiologista",
+    "isAdmin": true
+  },
+  {
+    "id": 8,
+    "name": "Mariana ",
+    "email": "mariana.a@example.com",
+    "password": "senha101112",
+    "crm": "112233-MG",
+    "phone": "31987654323",
+    "speciality": "Dermatologista",
+    "isAdmin": true
+  },
+  {
+    "id": 9,
+    "name": "Heitor",
+    "email": "jaodsadas@example.com",
+    "password": "12345678",
+    "crm": "334455-PR",
+    "phone": "41987654324",
+    "speciality": "Cardiologista",
+    "isAdmin": false
+  }
+]

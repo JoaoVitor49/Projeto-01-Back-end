@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken")
-const SENHA = "123@abc#"
 
 //autenticação de token
 function authenticateToken(req, res, next) {
@@ -9,7 +8,7 @@ function authenticateToken(req, res, next) {
     if (!token) return res.status(401).json({ message: 'Acesso negado: Token não fornecido' })
 
     try {
-        const decoded = jwt.verify(token, SENHA)
+        const decoded = jwt.verify(token, process.env.SENHA)
         req.user = decoded
         next()
     } catch (err) {
@@ -25,4 +24,4 @@ function admin(req, res, next) {
     next();
 }
 
-module.exports = { authenticateToken, admin }
+module.exports = { authenticateToken, admin } 
